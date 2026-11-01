@@ -1,0 +1,17 @@
+{
+  "name": "시간 계량기",
+  "short_name": "계량기",
+  "description": "일정이 다이얼을 타고 올라오는 계량기형 스케줄 앱",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EBEBE8",
+  "theme_color": "#EBEBE8",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
