@@ -17,7 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#EBEBE8; --ink:#141414; --ink2:#54544F; --mid:#686864; --light:#BDBDB8; --hair:#D6D6D2; --acc:#FF5B1F;
+  --bg:#EBEBE8; --ink:#141414; --ink2:#54544F; --mid:#686864; --light:#BDBDB8; --line:#848480; --hair:#D6D6D2; --acc:#FF5B1F;
   --warn:#9A4317; --bad:#B42A15; --good:#1F6844;
   --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
   --sans:'IBM Plex Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo',sans-serif;
@@ -84,7 +84,7 @@ nav .plus{margin-left:auto;width:56px;height:56px;border-radius:50%;background:v
 
 .ov{position:fixed;inset:0;background:#14141466;display:none;align-items:flex-end;justify-content:center;z-index:10}
 .ov.open{display:flex}
-.sheet{width:100%;max-width:480px;max-height:90dvh;overflow-y:auto;background:var(--bg);color:var(--ink);border-radius:22px 22px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom));user-select:text;-webkit-user-select:text}
+.sheet{word-break:keep-all;overflow-wrap:anywhere;width:100%;max-width:480px;max-height:90dvh;overflow-y:auto;background:var(--bg);color:var(--ink);border-radius:22px 22px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom));user-select:text;-webkit-user-select:text}
 .sh-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .sh-h h2{margin:0;font-size:20px;font-weight:500}
 .x{width:44px;height:44px;font-size:20px;color:var(--ink2)}
@@ -109,7 +109,7 @@ select.in{-webkit-appearance:none;appearance:none}
 .legend span{display:flex;align-items:center;gap:6px}
 .err{color:var(--bad);font-size:13.5px;margin-top:6px}
 .btns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
-.btn{flex:1;min-height:50px;border-radius:25px;border:1px solid var(--light);font-size:16px;font-weight:500;color:var(--ink);padding:0 18px}
+.btn{flex:1;min-height:50px;border-radius:25px;border:1px solid var(--line);font-size:16px;font-weight:500;color:var(--ink);padding:0 18px}
 .btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .btn.dng{color:var(--bad);border-color:transparent}
 .btn.sm{flex:none;min-height:36px;font-size:13px;border:none;padding:0;font-family:var(--mono)}
@@ -141,6 +141,34 @@ details>summary::-webkit-details-marker{display:none}
 details>summary::before{content:'+';display:inline-block;width:18px;color:var(--acc)}
 details[open]>summary::before{content:'−'}
 .steps{margin:2px 0 6px;padding-left:20px;font-size:14px;color:var(--ink2);line-height:1.7}
+.isub{margin:0 0 12px;font-size:14px;color:var(--ink2);line-height:1.6}
+.imp{border-top:1px solid var(--hair)}
+.ir{border-bottom:1px solid var(--hair);padding:12px 0}
+.ir-h{display:flex;align-items:center;gap:12px}
+.ir .dot{font-family:var(--mono);font-size:12px;color:var(--mid);width:34px;flex:none}
+.ir.on .dot{color:var(--ink);font-weight:500}
+.ir .m{flex:1;min-width:0}
+.ir .m b{display:block;font-size:16px;font-weight:500}
+.ir .m small{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;color:var(--mid)}
+.ir .m small.good{color:var(--good)}
+.ir .m small.good::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--good);flex:none}
+.ir .m small.bad{color:var(--bad);font-family:var(--sans)}
+.lk{min-height:44px;display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:13px;color:var(--ink2);flex:none}
+.lk i{font-style:normal;color:var(--acc)}
+.ip{padding:14px 0 4px 46px}
+.ip .in.bad{border-bottom-color:var(--bad)}
+.ip .in:disabled{opacity:1;color:var(--ink);-webkit-text-fill-color:var(--ink);border-bottom-color:var(--ink)}
+.ip .note{margin-top:10px}
+.ip .err a,.ip .note a{color:inherit}
+.mf+.mf{border-top:1px solid var(--hair);margin-top:12px;padding-top:12px}
+.mf>b{display:block;font-size:15px;font-weight:500;margin-bottom:4px}
+.ld{display:flex;justify-content:space-between;font-size:14px;color:var(--ink2);margin-top:14px}
+.bar{height:3px;background:var(--hair);margin-top:8px;position:relative;overflow:hidden}
+.bar::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:40%;background:var(--ink);animation:bar 1.1s ease-in-out infinite}
+@keyframes bar{to{left:100%}}
+.ifoot{border-top:1px solid var(--hair);margin-top:22px;padding-top:14px}
+.ifoot .fl{margin-bottom:2px}
+.lks{display:flex;flex-wrap:wrap;gap:0 24px}
 .ver{font-family:var(--mono);font-size:12px;color:var(--mid);margin-top:22px;text-align:right}
 </style>
 </head>
@@ -179,7 +207,7 @@ details[open]>summary::before{content:'−'}
 <div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <script>
 'use strict';
-const VER='0.4.4';
+const VER='0.5';
 // 캘린더 중계 서버 (paperhat0627 계정 Apps Script 웹 앱 주소).
 const RELAY_DEFAULT='https://script.google.com/macros/s/AKfycbzdh6mZpHfXfZYzoqJ4NVjpjJhF01BLWW5ka3O43SW27WH8UgkC_jeZY3Jjed4gKaUBlw/exec';
 const NOTION_GUIDE='https://github.com/astaho27-dotcom/time-meter/tree/main/notion-sync';
@@ -535,11 +563,11 @@ function setCenter(html){if(html!==lastCenter){$('center').innerHTML=html;lastCe
 
 /* ---------- time-of-day palette ---------- */
 const PAL={
-  dawn :{bg:'#F2EFE9',ink:'#161513',ink2:'#55524C',mid:'#68655E',light:'#BEBAB1',hair:'#DCD7CD',acc:'#FF7A1A',warn:'#9A4317',bad:'#B42A15',good:'#1F6844'},
-  day  :{bg:'#EBEBE8',ink:'#141414',ink2:'#54544F',mid:'#686864',light:'#BDBDB8',hair:'#D6D6D2',acc:'#FF5B1F',warn:'#9A4317',bad:'#B42A15',good:'#1F6844'},
-  dusk :{bg:'#E9E4DD',ink:'#171513',ink2:'#57524C',mid:'#69635C',light:'#BFB8AE',hair:'#D8D1C6',acc:'#F2461C',warn:'#9A4317',bad:'#B42A15',good:'#1F6844'},
-  eve  :{bg:'#DCDBD8',ink:'#121212',ink2:'#4C4C48',mid:'#5E5E5A',light:'#B0B0AB',hair:'#C8C8C4',acc:'#E83A1E',warn:'#8A3B12',bad:'#A32411',good:'#1A5E3D'},
-  night:{bg:'#151514',ink:'#ECECE7',ink2:'#BDBDB7',mid:'#97978F',light:'#4C4C49',hair:'#2D2D2B',acc:'#FF6A30',warn:'#F0904F',bad:'#FF6B57',good:'#5CC28F'}
+  dawn :{bg:'#F2EFE9',ink:'#161513',ink2:'#55524C',mid:'#68655E',light:'#BEBAB1',line:'#8A8780',hair:'#DCD7CD',acc:'#FF7A1A',warn:'#9A4317',bad:'#B42A15',good:'#1F6844'},
+  day  :{bg:'#EBEBE8',ink:'#141414',ink2:'#54544F',mid:'#686864',light:'#BDBDB8',line:'#848480',hair:'#D6D6D2',acc:'#FF5B1F',warn:'#9A4317',bad:'#B42A15',good:'#1F6844'},
+  dusk :{bg:'#E9E4DD',ink:'#171513',ink2:'#57524C',mid:'#69635C',light:'#BFB8AE',line:'#847F78',hair:'#D8D1C6',acc:'#F2461C',warn:'#9A4317',bad:'#B42A15',good:'#1F6844'},
+  eve  :{bg:'#DCDBD8',ink:'#121212',ink2:'#4C4C48',mid:'#5E5E5A',light:'#B0B0AB',line:'#7A7A77',hair:'#C8C8C4',acc:'#E83A1E',warn:'#8A3B12',bad:'#A32411',good:'#1A5E3D'},
+  night:{bg:'#151514',ink:'#ECECE7',ink2:'#BDBDB7',mid:'#97978F',light:'#4C4C49',line:'#666662',hair:'#2D2D2B',acc:'#FF6A30',warn:'#F0904F',bad:'#FF6B57',good:'#5CC28F'}
 };
 const PKEYS=[[330,'dawn'],[480,'dawn'],[720,'day'],[1020,'day'],[1110,'dusk'],[1200,'eve'],[1260,'eve']];
 function hx(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16))}
@@ -831,9 +859,9 @@ async function refreshFeed(f){
     const old={};for(const e of state.events)if(e.src==='feed'&&e.feedId===f.id&&e.repeat&&e.skips&&e.skips.length)old[e.extId]=e.skips;
     for(const e of evs)if(e.repeat&&old[e.extId])e.skips=[...new Set([...(e.skips||[]),...old[e.extId]])];
     state.events=state.events.filter(x=>!(x.src==='feed'&&x.feedId===f.id)).concat(evs);
-    f.count=evs.length;f.last=Date.now();f.err='';
+    f.count=evs.length;f.last=Date.now();f.err='';f.errCode='';
     return true;
-  }catch(e){f.err=feedErr((e&&e.code)||'unknown');return false}
+  }catch(e){f.errCode=(e&&e.code)||'unknown';f.err=feedErr(f.errCode);return false}
 }
 let refreshing=null;
 function refreshAll(){
@@ -846,64 +874,142 @@ function autoRefresh(){
   if(!feeds.list.length||!relayUrl()||Date.now()-(feeds.last||0)<30*MIN)return;
   refreshAll().then(ok=>{if(!dbRef)setSync(ok===feeds.list.length?'캘린더 '+hm(Date.now())+' 갱신':'캘린더 불러오기 실패 · 가져오기 확인')});
 }
-function feedSectionHTML(inClaude){
-  return '<div class="sec" style="border:none;margin-top:0;padding-top:0"><h3>캘린더 주소 연결 <em>무료 · Claude 없이</em></h3>'+
-  '<p>구글 캘린더의 <b>iCal 형식의 비공개 주소</b>를 넣어 두면 앱을 열 때마다(30분 간격) 새로 불러와요. 에타·노션 일정도 구글 캘린더에 모아 두면 여기서 같이 보여요.</p>'+
-  (inClaude?'<p class="note warn" style="margin:0 0 8px">주소 연결과 아래 "구글 캘린더에서 가져오기"를 같이 쓰면 같은 일정이 두 번 들어와요. 하나만 쓰세요.</p>':'')+
-  '<div class="list" id="fList"></div>'+
-  '<div class="btns" style="margin-top:12px" id="fAllBox"><button class="btn" id="fAll">모두 다시 불러오기</button></div><div class="status" id="fSt"></div>'+
-  '<details id="fAddBox"'+(feeds.list.length?'':' open')+'><summary>주소 추가</summary>'+
-    '<div class="f"><label>이름</label><input class="in" id="fName" maxlength="30" placeholder="예: 내 캘린더, 에타 시간표, 노션 TASK"></div>'+
-    '<div class="f"><label>비공개 주소 (.ics)</label><input class="in" id="fUrl" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://calendar.google.com/calendar/ical/…/basic.ics"></div>'+
-    '<div class="f"><label>종일 일정</label>'+segHTML('fAllDay',[['skip','빼기'],['deadline','마감으로 표시']],'skip')+'</div>'+
-    '<div class="f"><label>기본 카테고리 (제목으로 못 정할 때)</label>'+segHTML('fCat',Object.entries(CATS).map(([k,c])=>[k,c.name]),'personal')+'</div>'+
-    '<div class="err" id="fErr"></div><button class="btn pri" id="fAdd" style="width:100%">추가하고 불러오기</button></details>'+
-  '<details><summary>주소 찾는 법</summary><ol class="steps">'+
-    '<li>PC에서 calendar.google.com → 오른쪽 위 톱니 → 설정</li>'+
-    '<li>왼쪽 "내 캘린더의 설정"에서 캘린더 선택</li>'+
-    '<li>"캘린더 통합" → <b>iCal 형식의 비공개 주소</b> 복사</li>'+
-    '<li>캘린더가 여러 개면 각각 추가해요</li></ol>'+
-    '<p class="note"><b>에타</b> · <a href="https://everycal.kro.kr/" target="_blank" rel="noopener">EveryCal</a>에서 받은 .ics를 구글 캘린더 → 설정 → 가져오기로 새 캘린더에 넣고, 그 캘린더 주소를 추가해요.<br>'+
-    '<b>노션</b> · <a href="'+NOTION_GUIDE+'" target="_blank" rel="noopener">노션 → 구글 캘린더 동기화 안내</a>대로 옮긴 뒤 생긴 "노션 TASK" 캘린더 주소를 추가하고, 종일 일정은 "마감으로 표시"를 골라요.<br>'+
-    '<b>아이폰 캘린더</b> · iCloud 캘린더의 "공개 캘린더" 주소도 쓸 수 있어요.<br>'+
-    '학교·회사 구글 계정은 관리자가 비공개 주소를 막아 둔 경우가 있어요.</p></details>'+
-  '<details><summary>개인정보 · 고급</summary><p class="note">주소는 이 기기에만 저장돼요. 불러올 때 중계 서버(Google Apps Script)를 거치는데, 서버는 주소와 일정을 저장하지 않아요. 비공개 주소는 비밀번호처럼 다루고, 새어 나갔으면 구글 캘린더에서 "재설정"하세요.</p>'+
-    '<div class="f"><label>중계 서버 주소 (직접 배포한 경우만)</label><input class="in" id="fRelay" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(RELAY_DEFAULT?'비우면 기본 서버 사용':'https://script.google.com/macros/s/…/exec')+'" value="'+esc(feeds.relay)+'"></div></details></div>';
+/* ---------- 일정 가져오기 v0.5: 링크 하나로 연결 ---------- */
+const KINDS={
+  ggl:{code:'GGL',name:'구글 캘린더',hint:'내 일정 → 개인',noun:'일정',cat:'personal',allDay:'skip',label:'구글 캘린더 비공개 주소',ph:'calendar.google.com/calendar/ical/…/basic.ics',
+    help:'PC에서 calendar.google.com → 설정 → 왼쪽에서 캘린더 선택 → 캘린더 통합 → <b>iCal 형식의 비공개 주소</b> 복사'},
+  eta:{code:'ETA',name:'에브리타임',hint:'시간표 → 수업',noun:'수업',cat:'class',allDay:'skip',label:'시간표 공유 링크',ph:'everytime.kr/@…',
+    help:'에타 → 시간표 → 설정(톱니) → 공개 범위 <b>전체 공개</b> → <b>URL로 공유</b>'},
+  ntn:{code:'NTN',name:'노션',hint:'할 일 → 마감',noun:'마감',cat:'project',allDay:'deadline',label:'"노션 TASK" 캘린더 비공개 주소',ph:'calendar.google.com/calendar/ical/…/basic.ics',
+    help:'노션은 링크만으로 읽을 수 없어요. <a href="'+NOTION_GUIDE+'" target="_blank" rel="noopener">노션 → 구글 캘린더 동기화</a>를 한 번 해 두고, 생긴 "노션 TASK" 캘린더의 <b>iCal 형식의 비공개 주소</b>를 붙여 넣어요.'},
+  ics:{code:'ICS',name:'다른 캘린더',hint:'iCloud · Outlook',noun:'일정',cat:'etc',allDay:'skip',label:'캘린더 주소 (.ics)',ph:'webcal://… 또는 https://….ics',
+    help:'iCloud: 캘린더 앱 → 캘린더 ⓘ → <b>공개 캘린더</b> 켜고 링크 복사 · Outlook: 설정 → 공유 캘린더 → <b>캘린더 게시</b> → ICS 링크'}
+};
+Object.assign(FEED_ERR,{
+  gshare:'공유 링크예요. <b>비공개 주소</b>가 필요해요.',
+  notion_link:'노션 링크는 바로 읽을 수 없어요. 아래 안내대로 만든 "노션 TASK" 캘린더 주소를 붙여 넣어 주세요.',
+  eta_bad:'에타 시간표 공유 링크가 아니에요. everytime.kr/@… 모양이어야 해요.',
+  eta_private:'시간표를 읽지 못했어요. 에타에서 공개 범위를 "전체 공개"로 바꿨는지 확인해 주세요.',
+  eta_empty:'시간표에 시간이 정해진 수업이 없어요.',
+  eta_failed:'에브리타임에서 시간표를 받지 못했어요. 잠시 후 다시 시도해 주세요.',
+  relay_old:'중계 서버가 옛 버전이라 에타 링크를 못 읽어요. relay/Code.gs를 새 버전으로 다시 배포해 주세요.',
+  dup:'이미 연결된 링크예요.',
+  clip_empty:'클립보드가 비어 있어요. 링크를 복사한 뒤 다시 눌러 주세요.',
+  clip_denied:'붙여넣기가 막혀 있어요. 입력 칸을 길게 눌러 붙여 넣어 주세요.'
+});
+function kindOf(f){
+  if(f.kind&&KINDS[f.kind])return f.kind;
+  const u=String(f.url||''),n=String(f.name||'');
+  if(/everytime\.kr/i.test(u))return 'eta';
+  if(/노션|notion/i.test(n))return 'ntn';
+  if(/에타|에브리타임|everytime/i.test(n))return 'eta';
+  if(/calendar\.google\.com/i.test(u))return 'ggl';
+  return 'ics';
 }
-function renderFeeds(){
-  const box=$('fList');if(!box)return;
-  $('fAllBox').style.display=feeds.list.length?'flex':'none';
-  box.innerHTML=feeds.list.map(f=>'<div class="li"><span class="dot">ICS</span><span class="m"><b>'+esc(f.name)+'</b>'+
-    (f.err?'<small class="bad">'+esc(f.err)+'</small>':'<small>'+(f.last?f.count+'개 · '+ago(f.last):'아직 안 불러옴')+(f.allDay==='deadline'?' · 종일=마감':'')+'</small>')+
-    '</span><span class="acts"><button class="btn sm" data-fr="'+f.id+'">불러오기</button><button class="btn sm dng" data-fd="'+f.id+'">삭제</button></span></div>').join('');
+/* 붙여 넣은 글자 → {kind, url} 또는 {err} */
+function detectLink(raw,row){
+  let s=String(raw||'').trim();const m=s.match(/(webcal|https?):\/\/\S+/i);if(m)s=m[0];
+  if(!/^(webcal|https?):\/\//i.test(s)){if(/^(www\.|m\.)?everytime\.kr\//i.test(s)||/^[a-z0-9.-]+\.[a-z]{2,}\//i.test(s))s='https://'+s;else return {err:'bad_url'}}
+  s=s.replace(/^webcal:\/\//i,'https://').replace(/^http:\/\//i,'https://').replace(/[)\]>"'.,]+$/,'');
+  const h=(s.match(/^https:\/\/([^\/?#:@]+)/i)||[])[1];if(!h)return {err:'bad_url'};const host=h.toLowerCase();
+  if(/(^|\.)everytime\.kr$/.test(host)){const id=(s.match(/^https:\/\/[^\/]+\/@([A-Za-z0-9]{1,40})\/?(?:[?#]|$)/)||[])[1];
+    return id?{kind:'eta',url:'https://everytime.kr/@'+id}:{err:'eta_bad'}}
+  if(/(^|\.)notion\.(so|site)$/.test(host))return {err:'notion_link'};
+  if(host==='calendar.google.com'){if(!/\/calendar\/ical\//.test(s))return {err:'gshare'};return {kind:row==='ntn'?'ntn':'ggl',url:s}}
+  if(row==='eta')return {err:'eta_bad'};
+  return {kind:row==='ggl'?'ics':row,url:s};
+}
+function feedName(kind,url){
+  let base=KINDS[kind].name;
+  if(kind==='eta')base='에타 시간표';else if(kind==='ntn')base='노션 TASK';
+  else if(kind==='ics')base=/icloud\.com/i.test(url)?'iCloud 캘린더':/outlook\./i.test(url)?'Outlook 캘린더':'캘린더';
+  let n=base,i=2;while(feeds.list.some(f=>f.name===n))n=base+' '+(i++);return n;
+}
+let imp={open:null,phase:'idle',val:'',err:'',kind:null};
+function rowSummary(k){
+  const fs=feeds.list.filter(f=>kindOf(f)===k);
+  if(!fs.length)return '<small>'+KINDS[k].hint+'</small>';
+  const bad=fs.find(f=>f.err);if(bad)return '<small class="bad">불러오지 못했어요 · 관리에서 확인</small>';
+  const n=fs.reduce((a,f)=>a+(f.count||0),0),last=Math.max(...fs.map(f=>f.last||0));
+  if(!last)return '<small>연결됨 · 아직 안 불러옴</small>';
+  return '<small class="good">'+(fs.length>1?fs.length+'개 · ':'')+KINDS[k].noun+' '+n+'개'+(last?' · '+hm(last):'')+'</small>';
+}
+function pastePanel(k){
+  const K=KINDS[k],busy=imp.phase==='loading',e=imp.err;
+  let h='<div class="ip"><label class="fl" for="impUrl">'+K.label+'</label>'+
+    '<input class="in'+(e?' bad':'')+'" id="impUrl" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+K.ph+'" value="'+esc(imp.val)+'"'+(busy?' disabled':'')+'>';
+  if(busy)h+='<div class="status good">✓ '+(imp.kind==='eta'?'에브리타임 시간표':KINDS[imp.kind].name)+' 링크예요</div>'+
+    '<div class="ld"><span>'+(imp.kind==='eta'?'시간표':'일정')+' 불러오는 중…</span></div><div class="bar" role="progressbar" aria-label="불러오는 중"></div>';
+  else{
+    if(e)h+='<div class="err">'+(FEED_ERR[e]||esc(e))+'</div>';
+    if(navigator.clipboard&&navigator.clipboard.readText)h+='<button class="btn pri" id="impClip" style="width:100%;margin-top:14px">'+(e?'다시 붙여넣기':'복사한 링크 붙여넣기')+'</button>';
+  }
+  return h+'<p class="note">'+K.help+'</p></div>';
+}
+function managePanel(k){
+  const fs=feeds.list.filter(f=>kindOf(f)===k);
+  return '<div class="ip">'+fs.map(f=>'<div class="mf" data-f="'+f.id+'">'+
+    (fs.length>1?'<b>'+esc(f.name)+'</b>':'')+
+    (f.err?'<div class="err">'+esc(f.err)+'</div>':'<div class="fl" style="margin:0 0 4px">'+(f.last?f.count+'개 · '+ago(f.last)+' 불러옴':'아직 안 불러옴')+'</div>')+
+    (k==='eta'?'':'<div class="fl" style="margin:10px 0 0">종일 일정</div>'+segHTML('ad_'+f.id,[['skip','빼기'],['deadline','마감으로 표시']],f.allDay||'skip'))+
+    '<div class="btns" style="margin-top:10px"><button class="btn" data-fr="'+f.id+'">지금 새로고침</button><button class="btn dng" data-fd="'+f.id+'">연결 끊기</button></div></div>').join('')+
+    '<button class="lk" id="impMore" style="margin-top:6px"><i>+</i>'+(k==='ggl'?'캘린더 하나 더 연결':'하나 더 연결')+'</button></div>';
+}
+function renderImp(){
+  const box=$('impList');if(!box)return;
+  const n=feeds.list.length;$('impSub').textContent=n?n+'개 연결됨 · 앱을 열 때마다 새로 불러와요.':'링크 하나만 붙여넣으면 알아서 불러와요.';
+  box.innerHTML=Object.keys(KINDS).map(k=>{
+    const on=feeds.list.some(f=>kindOf(f)===k),open=imp.open===k;
+    const act=open?'<i>−</i>'+(imp.phase==='manage'?'관리':'닫기'):'<i>+</i>'+(on?'관리':'연결');
+    return '<div class="ir'+(on||open?' on':'')+'"><div class="ir-h"><span class="dot">'+KINDS[k].code+'</span><span class="m"><b>'+KINDS[k].name+'</b>'+rowSummary(k)+'</span>'+
+      '<button class="lk" data-k="'+k+'" aria-expanded="'+open+'">'+act+'</button></div>'+
+      (open?(imp.phase==='manage'?managePanel(k):pastePanel(k)):'')+'</div>'}).join('');
+  box.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;if(imp.phase==='loading')return;
+    if(imp.open===k){imp={open:null,phase:'idle',val:'',err:'',kind:null}}
+    else imp={open:k,phase:feeds.list.some(f=>kindOf(f)===k)?'manage':'paste',val:'',err:'',kind:null};
+    renderImp();if(imp.phase==='paste'){const i=$('impUrl');if(i&&!(navigator.clipboard&&navigator.clipboard.readText))i.focus()}});
+  const inp=$('impUrl');
+  if(inp&&!inp.disabled){let t=null;
+    const go=()=>{clearTimeout(t);const v=inp.value.trim();if(v)connectLink(v)};
+    inp.addEventListener('paste',()=>setTimeout(go,0));
+    inp.addEventListener('input',()=>{clearTimeout(t);if(/[a-z]\.[a-z]{2,}\//i.test(inp.value))t=setTimeout(go,600)});
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});}
+  const cb=$('impClip');if(cb)cb.onclick=async()=>{
+    let v='';try{v=await navigator.clipboard.readText()}catch(e){imp.err='clip_denied';renderImp();const i=$('impUrl');if(i)i.focus();return}
+    if(!v.trim()){imp.err='clip_empty';renderImp();return}
+    connectLink(v)};
+  const more=$('impMore');if(more)more.onclick=()=>{imp.phase='paste';imp.val='';imp.err='';renderImp()};
+  box.querySelectorAll('.mf').forEach(el=>{const f=feeds.list.find(x=>x.id===el.dataset.f);if(!f)return;
+    if($('ad_'+f.id))bindSeg('ad_'+f.id,async v=>{f.allDay=v;setStatus('impSt','"'+f.name+'" 다시 불러오는 중…');await refreshFeed(f);saveFeeds();commit();renderImp();
+      setStatus('impSt',f.err?f.err:'종일 일정을 '+(v==='deadline'?'마감으로 표시해요.':'빼고 보여줘요.'),f.err?'bad':'good')});});
   box.querySelectorAll('[data-fr]').forEach(b=>b.onclick=async()=>{
-    const f=feeds.list.find(x=>x.id===b.dataset.fr);if(!f)return;b.disabled=true;setStatus('fSt','"'+f.name+'" 불러오는 중…');
-    const ok=await refreshFeed(f);saveFeeds();commit();renderFeeds();
-    setStatus('fSt',ok?'"'+f.name+'"에서 '+f.count+'개 일정을 불러왔어요.':f.err,ok?'good':'bad')});
+    const f=feeds.list.find(x=>x.id===b.dataset.fr);if(!f)return;b.disabled=true;setStatus('impSt','"'+f.name+'" 불러오는 중…');
+    const ok=await refreshFeed(f);saveFeeds();commit();renderImp();
+    setStatus('impSt',ok?'"'+f.name+'"에서 '+f.count+'개를 불러왔어요.':f.err,ok?'good':'bad')});
   box.querySelectorAll('[data-fd]').forEach(b=>{let armed=false;b.onclick=()=>{
-    if(!armed){armed=true;b.textContent='한 번 더';return}
-    const id=b.dataset.fd;feeds.list=feeds.list.filter(x=>x.id!==id);state.events=state.events.filter(x=>!(x.src==='feed'&&x.feedId===id));
-    saveFeeds();commit();renderFeeds();setStatus('fSt','연결을 지우고 그 캘린더 일정도 뺐어요.')}});
+    if(!armed){armed=true;b.textContent='한 번 더 누르면 끊겨요';return}
+    const id=b.dataset.fd,f=feeds.list.find(x=>x.id===id);feeds.list=feeds.list.filter(x=>x.id!==id);state.events=state.events.filter(x=>!(x.src==='feed'&&x.feedId===id));
+    saveFeeds();commit();
+    if(!feeds.list.some(x=>kindOf(x)===imp.open))imp={open:null,phase:'idle',val:'',err:'',kind:null};
+    renderImp();setStatus('impSt','"'+(f?f.name:'캘린더')+'" 연결을 끊고 그 일정도 뺐어요.')}});
 }
-function bindFeeds(){
-  renderFeeds();bindSeg('fAllDay');bindSeg('fCat');
-  $('fAll').onclick=async()=>{const b=$('fAll');b.disabled=true;setStatus('fSt','불러오는 중…');
-    const ok=await refreshAll();b.disabled=false;renderFeeds();
-    setStatus('fSt',ok===feeds.list.length?feeds.list.length+'개 캘린더를 모두 새로 불러왔어요.':(feeds.list.length-ok)+'개 캘린더를 불러오지 못했어요.',ok===feeds.list.length?'good':'bad')};
-  $('fRelay').onchange=()=>{feeds.relay=normUrl($('fRelay').value);saveFeeds();setStatus('fSt',feeds.relay?'중계 서버 주소를 저장했어요.':'기본 중계 서버를 써요.')};
-  $('fAdd').onclick=async()=>{
-    const err=$('fErr');err.textContent='';
-    const name=$('fName').value.trim()||'캘린더';const url=normUrl($('fUrl').value);
-    if(!/^https:\/\/\S+$/i.test(url)){err.textContent=FEED_ERR.bad_url;return}
-    if(feeds.list.some(f=>f.url===url)){err.textContent='이미 연결된 주소예요.';return}
-    const f={id:uid(),name,url,allDay:segVal('fAllDay')||'skip',cat:segVal('fCat')||'personal',last:0,count:0,err:''};
-    const btn=$('fAdd');btn.disabled=true;setStatus('fSt','"'+name+'" 불러오는 중…');
-    const ok=await refreshFeed(f);btn.disabled=false;
-    if(!ok){err.textContent=f.err;setStatus('fSt','');return}
-    feeds.list.push(f);feeds.last=feeds.last||Date.now();saveFeeds();commit();
-    $('fName').value='';$('fUrl').value='';$('fAddBox').open=false;renderFeeds();
-    setStatus('fSt','"'+name+'"에서 '+f.count+'개 일정을 불러왔어요.','good');
-  };
+async function connectLink(raw){
+  const row=imp.open;if(!row||imp.phase==='loading')return;
+  imp.val=String(raw).trim();imp.err='';setStatus('impSt','');
+  const d=detectLink(raw,row);
+  if(d.err){imp.err=d.err;renderImp();return}
+  if(feeds.list.some(f=>normUrl(f.url)===d.url)){imp.err='dup';renderImp();return}
+  const K=KINDS[d.kind];
+  const f={id:uid(),kind:d.kind,name:feedName(d.kind,d.url),url:d.url,allDay:K.allDay,cat:K.cat,last:0,count:0,err:''};
+  imp.val=d.url;imp.kind=d.kind;imp.phase='loading';renderImp();
+  const ok=await refreshFeed(f);
+  if(!ok){imp.phase='paste';imp.kind=null;imp.err=f.errCode==='host_not_allowed'&&d.kind==='eta'?'relay_old':(FEED_ERR[f.errCode]?f.errCode:f.err);renderImp();return}
+  feeds.list.push(f);feeds.last=feeds.last||Date.now();saveFeeds();commit();
+  const moved=d.kind!==row?' ('+KINDS[d.kind].name+' 링크라서 그쪽에 연결했어요)':'';
+  let tail='';if(d.kind==='eta'){const ev=state.events.find(e=>e.feedId===f.id&&e.repeat&&e.repeat.until);if(ev)tail=' · '+ev.repeat.until.slice(5).replace('-','/')+'까지 매주'}
+  imp={open:null,phase:'idle',val:'',err:'',kind:null};renderImp();
+  setStatus('impSt','"'+f.name+'"에서 '+K.noun+' '+f.count+'개를 불러왔어요'+tail+'.'+moved,'good');
 }
 
 /* ---------- imports ---------- */
@@ -937,29 +1043,40 @@ function setStatus(id,msg,kind){const el=$(id);if(!el)return;el.className='statu
 function openImport(){
   const today=ymd(sod(Date.now()));const until=ymd(Date.now()+8*7*DAY);
   const inClaude=!!(window.claude&&window.claude.use);
-  let html=head('일정 가져오기')+feedSectionHTML(inClaude);
+  imp={open:null,phase:'idle',val:'',err:'',kind:null};
+  let html=head('일정 가져오기')+'<p class="isub" id="impSub"></p><div class="imp" id="impList"></div><div class="status" id="impSt"></div>'+
+  '<div class="ifoot"><div class="fl">링크가 없을 때</div>'+
+    '<div class="lks"><button class="lk" id="icsBtn"><i>+</i>.ics 파일 올리기</button><button class="lk" id="manBtn"><i>+</i>직접 추가</button></div>'+
+    '<input type="file" accept=".ics,text/calendar" id="icsF" hidden><div class="status" id="iSt"></div>';
   if(inClaude){
-    html+='<div class="sec"><h3>구글 캘린더 <em>Claude 앱 전용</em></h3><p>오늘부터 2주 동안의 일정을 가져와요. 다시 누르면 최신 상태로 바뀌어요.</p>'+
+    html+='<details><summary>Claude 앱 전용 가져오기</summary>'+
+    '<div class="sec" style="border:none;margin-top:0;padding-top:4px"><h3>구글 캘린더 <em>Claude 커넥터</em></h3><p>오늘부터 2주 동안의 일정을 가져와요. 위에서 구글 캘린더를 연결했다면 같은 일정이 두 번 들어오니 하나만 쓰세요.</p>'+
       '<button class="btn pri" id="gBtn">구글 캘린더에서 가져오기</button><div class="status" id="gSt"></div></div>'+
-    '<div class="sec"><h3>노션 <em>Claude 앱 전용</em></h3><p>날짜 속성이 있는 데이터베이스를 찾아 연결해요. 시간까지 있는 항목은 블록으로, 날짜만 있는 항목은 마감 표시로 들어와요.</p>'+
+    '<div class="sec"><h3>노션 <em>Claude 커넥터</em></h3><p>날짜 속성이 있는 데이터베이스를 찾아 연결해요. 시간까지 있는 항목은 블록으로, 날짜만 있는 항목은 마감 표시로 들어와요.</p>'+
       '<div class="row"><input class="in" id="nQ" placeholder="데이터베이스 이름 또는 URL"><button class="btn sm" id="nFind" style="height:42px">찾기</button></div>'+
       '<div class="status" id="nWs" style="margin:-4px 0 8px"></div>'+
-      '<div class="list" id="nList"></div><div id="nCfg"></div><div class="status" id="nSt"></div></div>';
+      '<div class="list" id="nList"></div><div id="nCfg"></div><div class="status" id="nSt"></div></div>'+
+    '<div class="sec"><h3>시간표 캡처 <em>Claude가 읽기</em></h3>'+
+      '<div class="f"><label>학기 기간</label><div class="row"><input class="in" type="date" id="tFrom" value="'+today+'"><input class="in" type="date" id="tUntil" value="'+until+'"></div></div>'+
+      '<div class="f" id="capBox"><label>시간표 캡처 이미지</label><input type="file" accept="image/*" id="tImg" class="in" style="padding-top:8px"><div class="status" id="tSt"></div><div id="tPrev"></div></div></div></details>';
   }
-  html+='<div class="sec"><h3>에브리타임 · ICS 파일</h3><p>에브리타임은 공식 연동이 없어요. 시간표를 전체 공개 → URL 공유로 복사한 뒤 <a href="https://everycal.kro.kr/" target="_blank" rel="noopener">EveryCal</a>에서 .ics로 바꿔요. 받은 파일은 여기에 바로 올리거나, 구글 캘린더에 가져오기 한 뒤 위 "캘린더 주소 연결"로 연결하면 다른 기기에서도 같이 보여요.</p>';
-  if(inClaude){
-    html+='<div class="f"><label>학기 기간 (캡처 읽기용)</label><div class="row"><input class="in" type="date" id="tFrom" value="'+today+'"><input class="in" type="date" id="tUntil" value="'+until+'"></div></div>'+
-      '<div class="f" id="capBox"><label>시간표 캡처 이미지 → Claude가 읽기 <span style="color:var(--mid)">(Claude 앱 전용)</span></label><input type="file" accept="image/*" id="tImg" class="in" style="padding-top:8px"><div class="status" id="tSt"></div><div id="tPrev"></div></div>';
-  }
-  html+='<div class="f"><label>.ics 파일 올리기</label><input type="file" accept=".ics,text/calendar" id="icsF" class="in" style="padding-top:8px"><div class="status" id="iSt"></div></div></div>'+
-  '<div class="sec"><h3>기기 간 옮기기</h3><p>Claude 앱 버전과 홈 화면 앱은 저장소가 따로라서, 옮기기 코드로 일정을 주고받아요. 연결된 캘린더 일정은 옮기지 않아요(기기마다 주소를 연결하세요).</p>'+
+  html+='<details><summary>기기 간 옮기기</summary><p class="note" style="margin-top:0">Claude 앱 버전과 홈 화면 앱은 저장소가 따로라서, 옮기기 코드로 일정을 주고받아요. 연결된 캘린더 일정은 옮기지 않아요(기기마다 링크를 연결하세요).</p>'+
     '<button class="btn" id="xOut" style="width:100%">이 기기 일정을 옮기기 코드로 복사</button>'+
     '<textarea class="in" id="xBox" rows="3" style="height:auto;min-height:88px;font-family:var(--mono);font-size:12px;margin-top:12px;resize:vertical" placeholder="다른 쪽에서 복사한 옮기기 코드를 여기에 붙여 넣으세요"></textarea>'+
-    '<button class="btn pri" id="xIn" style="width:100%;margin-top:10px">붙여 넣은 코드로 일정 바꾸기</button><div class="status" id="xSt"></div></div>'+
-  '<div class="ver">시간 계량기 v'+VER+'</div>';
+    '<button class="btn pri" id="xIn" style="width:100%;margin-top:10px">붙여 넣은 코드로 일정 바꾸기</button><div class="status" id="xSt"></div></details>'+
+  '<details><summary>개인정보 · 고급</summary><p class="note" style="margin-top:0">링크는 이 기기에만 저장돼요. 불러올 때 중계 서버(Google Apps Script)를 거치는데, 서버는 링크와 일정을 저장하지 않아요. 비공개 주소는 비밀번호처럼 다루고, 새어 나갔으면 구글 캘린더에서 "재설정"하세요.</p>'+
+    '<div class="btns" style="margin-top:4px"><button class="btn" id="fAll">연결된 캘린더 모두 새로고침</button></div>'+
+    '<div class="f"><label for="fRelay">중계 서버 주소 (직접 배포한 경우만)</label><input class="in" id="fRelay" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="'+(RELAY_DEFAULT?'비우면 기본 서버 사용':'https://script.google.com/macros/s/…/exec')+'" value="'+esc(feeds.relay)+'"></div></details>'+
+  '</div><div class="ver">시간 계량기 v'+VER+'</div>';
   openSheet(html);
-  bindFeeds();bindTransfer();
+  renderImp();bindTransfer();
+  $('icsBtn').onclick=()=>$('icsF').click();
   $('icsF').onchange=e=>{const f=e.target.files[0];if(f)importICS(f)};
+  $('manBtn').onclick=()=>openEdit(null,null);
+  $('fRelay').onchange=()=>{feeds.relay=normUrl($('fRelay').value);saveFeeds();setStatus('impSt',feeds.relay?'중계 서버 주소를 저장했어요.':'기본 중계 서버를 써요.')};
+  $('fAll').onclick=async()=>{const b=$('fAll');if(!feeds.list.length){setStatus('impSt','아직 연결된 캘린더가 없어요.');return}
+    b.disabled=true;setStatus('impSt','불러오는 중…');const ok=await refreshAll();b.disabled=false;renderImp();
+    setStatus('impSt',ok===feeds.list.length?feeds.list.length+'개 캘린더를 모두 새로 불러왔어요.':(feeds.list.length-ok)+'개 캘린더를 불러오지 못했어요.',ok===feeds.list.length?'good':'bad')};
   if(inClaude){
     $('gBtn').onclick=importGcal;
     $('nFind').onclick=notionFind;showNotionWs();$('nQ').onkeydown=e=>{if(e.key==='Enter')notionFind()};
