@@ -1,5 +1,5 @@
 /* 시간 계량기 서비스 워커 · 새 버전을 먼저 받고(network-first), 오프라인일 때만 저장본을 씁니다. */
-const CACHE = 'time-meter-v0.4.4';
+const CACHE = 'time-meter-v0.5';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png', './icon-512-maskable.png'];
 
 self.addEventListener('install', e => {
