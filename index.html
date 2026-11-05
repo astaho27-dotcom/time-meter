@@ -170,6 +170,32 @@ details[open]>summary::before{content:'−'}
 .ifoot .fl{margin-bottom:2px}
 .lks{display:flex;flex-wrap:wrap;gap:0 24px}
 .ver{font-family:var(--mono);font-size:12px;color:var(--mid);margin-top:22px;text-align:right}
+
+/* ---------- screensaver (v0.6, B 다이얼 · 어두운 화면) ---------- */
+.saver{position:fixed;inset:0;z-index:40;background:#0E0E0D;color:#ECECE7;opacity:0;transition:opacity .8s ease;user-select:none;-webkit-user-select:none;outline:none;touch-action:manipulation}
+.saver[hidden]{display:none}
+.saver.on{opacity:1}
+.sv-in{position:absolute;inset:0;margin:0 auto;max-width:480px;animation:svDrift 90s ease-in-out infinite alternate}
+#sdial{position:absolute;inset:0;width:100%;height:100%;display:block}
+.sv-clk{position:absolute;right:24px;top:calc(env(safe-area-inset-top) + 12px);font:500 13px var(--mono);color:#BDBDB7}
+.sv-c{position:absolute;right:20px}
+.sv-k{display:flex;flex-wrap:wrap;gap:4px 9px;font:400 13px var(--mono);color:#97978F}
+.sv-k .acc{color:#FF6A30}
+.sv-b{margin-top:12px}.sv-b svg{display:block}
+.sv-b.blink svg{animation:blink 1s steps(2,jump-none) infinite}
+.sv-u{margin:8px 0 0;font:400 13px var(--mono);color:#BDBDB7}
+.sv-u em{font-style:normal;color:#FF6A30}
+.sv-t{margin:16px 0 0;font-size:22px;font-weight:500;line-height:1.3;color:#ECECE7;word-break:keep-all;overflow-wrap:anywhere}
+.sv-t.dim{color:#BDBDB7}
+.sv-s{margin:3px 0 0;font:400 13px var(--mono);color:#97978F}
+.sv-f{position:absolute;right:20px;bottom:calc(env(safe-area-inset-bottom) + 96px)}
+.sv-f small{display:block;font:400 12px var(--mono);color:#97978F;margin-bottom:4px}
+.sv-f b{display:block;font-size:16px;font-weight:500;color:#BDBDB7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sv-f span{display:block;font:400 13px var(--mono);color:#97978F;margin-top:3px}
+.sv-hint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 34px);margin:0;text-align:center;font:400 12px var(--mono);color:#97978F;transition:opacity 1.5s ease}
+.sv-hint.off{opacity:0}
+@keyframes svDrift{0%{transform:translate(0,0)}50%{transform:translate(6px,-10px)}100%{transform:translate(-5px,8px)}}
+@media (prefers-reduced-motion:reduce){.sv-in{animation:none}.saver{transition:none}}
 </style>
 </head>
 <body>
@@ -205,9 +231,18 @@ details[open]>summary::before{content:'−'}
   </nav>
 </div>
 <div class="ov" id="ov"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="saver" id="saver" role="button" tabindex="-1" aria-label="스크린세이버 · 누르면 돌아가요" hidden>
+  <div class="sv-in" id="svIn">
+    <canvas id="sdial" aria-hidden="true"></canvas>
+    <b class="sv-clk" id="svClk"></b>
+    <div class="sv-c" id="svC"></div>
+    <div class="sv-f" id="svF"></div>
+  </div>
+  <p class="sv-hint" id="svHint">화면을 누르면 돌아가요</p>
+</div>
 <script>
 'use strict';
-const VER='0.5';
+const VER='0.6';
 // 캘린더 중계 서버 (paperhat0627 계정 Apps Script 웹 앱 주소).
 const RELAY_DEFAULT='https://script.google.com/macros/s/AKfycbzdh6mZpHfXfZYzoqJ4NVjpjJhF01BLWW5ka3O43SW27WH8UgkC_jeZY3Jjed4gKaUBlw/exec';
 const NOTION_GUIDE='https://github.com/astaho27-dotcom/time-meter/tree/main/notion-sync';
@@ -700,7 +735,8 @@ function frame(t){
   if(S.warm)rpm=1+5*Math.min(1,(now-S.warm.s)/WARM);
   else if(S.cur){const p=Math.min(1,(now-S.cur.s)/(S.cur.e-S.cur.s));rpm=1+3*p*p+(S.cur.e-now<=URGENT?2:0)}
   rpmNow+=(rpm-rpmNow)*0.05;spin+=dt/60000*rpmNow*Math.PI*2;
-  drawDial(now,S);drawTrace(now,S);drawDay(now,S);placeCenter();
+  if(saverOn){drawSaver(now,S);updateSaver(now,S)}
+  else{drawDial(now,S);drawTrace(now,S);drawDay(now,S);placeCenter();checkIdle(now)}
   requestAnimationFrame(frame);
 }
 
@@ -1398,6 +1434,118 @@ $('bAdd').onclick=()=>openEdit(null,null);
 $('bList').onclick=openList;
 $('bImp').onclick=openImport;
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){occKey='';updatePanel(true);autoRefresh()}});
+/* ---------- screensaver (v0.6) ---------- */
+// '켜두기'가 켜져 있고(켜두기를 못 쓰는 기기는 그냥) 2분 동안 손대지 않으면 어두운 다이얼 화면으로 바뀐다. 누르면 돌아온다.
+const SAVER_IDLE=2*MIN;
+const SV={bg:'#0E0E0D',ink:'#ECECE7',ink2:'#BDBDB7',mid:'#97978F',light:'#4C4C49',hair:'#2D2D2B',acc:'#FF6A30'};
+const sv=$('saver'),scv=$('sdial'),sctx=scv.getContext('2d');
+let saverOn=false,lastAct=Date.now(),SW=0,SH=0,sdpr=1,svGeo=null,lastSvC='',lastSvF='',svHintT=0;
+function markActive(){lastAct=Date.now()}
+['pointerdown','keydown','wheel','touchstart'].forEach(ev=>document.addEventListener(ev,markActive,{capture:true,passive:true}));
+function resizeSaver(){
+  sdpr=Math.min(3,window.devicePixelRatio||1);const r=scv.getBoundingClientRect();SW=r.width;SH=r.height;
+  scv.width=Math.round(SW*sdpr);scv.height=Math.round(SH*sdpr);
+  const R=Math.max(300,Math.min(SH*0.83,SW*1.8)),ix=Math.round(Math.min(SW*0.30,150));
+  svGeo={R,ix,cx:ix-R,cy:SH/2,k:0.3*Math.PI/180};
+  const c=$('svC');c.style.left=(ix+54)+'px';c.style.top=Math.max(80,SH/2-100)+'px';$('svF').style.left=(ix+54)+'px';
+  lastSvC='';
+}
+new ResizeObserver(()=>{if(saverOn)resizeSaver()}).observe(scv);
+function canSaver(){
+  if(ov.classList.contains('open')||document.hidden||drag)return false;
+  const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return false;
+  return !!wakeLock||!('wakeLock' in navigator);
+}
+function checkIdle(now){if(!saverOn&&now-lastAct>=SAVER_IDLE&&canSaver())showSaver()}
+function showSaver(){
+  saverOn=true;sv.hidden=false;resizeSaver();lastSvC='';lastSvF='';
+  const h=$('svHint');h.classList.remove('off');clearTimeout(svHintT);svHintT=setTimeout(()=>h.classList.add('off'),6000);
+  requestAnimationFrame(()=>sv.classList.add('on'));
+  try{sv.focus({preventScroll:true})}catch(e){}
+}
+function hideSaver(){
+  if(!saverOn)return;saverOn=false;sv.classList.remove('on');sv.hidden=true;clearTimeout(svHintT);
+  markActive();viewOff=0;lastTheme='';lastCenter='';updatePanel(true);
+}
+sv.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();hideSaver()});
+document.addEventListener('keydown',()=>{if(saverOn)hideSaver()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){markActive();hideSaver()}});
+function pxCols(str){let n=0;for(const ch of str){const g=PX[ch];if(g)n+=g[0].length+1}return Math.max(1,n-1)}
+function svPix(str,max,color,style){const avail=Math.max(60,SW-(svGeo?svGeo.ix+54:172)-20);const p=Math.max(5,Math.min(max,Math.floor(avail/pxCols(str))));return pixelSVG(str,p,color,style)}
+function drawSaver(now,S){
+  if(!SW||!SH||!svGeo)return;const c=sctx;
+  c.setTransform(sdpr,0,0,sdpr,0,0);c.clearRect(0,0,SW,SH);
+  const {R,ix,cx,cy,k}=svGeo;
+  const ang=t=>(t-now)/MIN*k;
+  const visA=Math.min(Math.PI/2.2,Math.asin(Math.min(1,(SH/2+10)/R)));
+  const P=(r,a)=>[cx+r*Math.cos(a),cy+r*Math.sin(a)];
+  c.lineWidth=1;c.strokeStyle=SV.hair;
+  c.beginPath();c.arc(cx,cy,R-46,-visA,visA);c.stroke();
+  c.save();c.setLineDash([1,5]);c.beginPath();c.arc(cx,cy,R+30,-visA,visA);c.stroke();c.restore();
+  c.strokeStyle=SV.light;c.beginPath();c.arc(cx,cy,R,-visA,visA);c.stroke();
+  const step=15*MIN,tFrom=now-visA/k*MIN,tTo=now+visA/k*MIN;
+  c.textAlign='center';c.textBaseline='middle';
+  for(let t=Math.ceil(tFrom/step)*step;t<=tTo;t+=step){
+    const a=ang(t);if(Math.abs(a)>visA)continue;
+    const d=new Date(t),m=d.getMinutes(),h=d.getHours();
+    let len=6,col=SV.mid,lw=1;if(m===0){len=15;col=SV.ink;lw=1.2}else if(m===30){len=8}
+    const [x0,y0]=P(R+3,a),[x1,y1]=P(R+3+len,a);
+    c.strokeStyle=col;c.lineWidth=lw;c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke();
+    if(m===0){const [lx,ly]=P(R-50,a);c.save();c.translate(lx,ly);c.rotate(a);c.font='500 12.5px '+MONO;
+      if(h===0){c.fillStyle=SV.acc;c.fillText(md(t).replace(/ .*/,''),0,0)}else{c.fillStyle=SV.ink2;c.fillText(pad(h)+'.00',0,0)}c.restore()}
+  }
+  const o=S.o;
+  for(const w of o.warms){const a0=ang(w.s),a1=ang(w.e);if(a1<-visA||a0>visA)continue;
+    c.save();c.strokeStyle=SV.acc;c.lineWidth=5;c.setLineDash([1.5,2.5]);c.beginPath();c.arc(cx,cy,R-16,Math.max(a0,-visA),Math.min(a1,visA));c.stroke();c.restore()}
+  const gap=2/R;
+  const arcPat=(r,f,t,col,lw,pat)=>{c.save();c.strokeStyle=col;c.lineCap='butt';
+    if(pat==='double'){c.lineWidth=1.6;for(const q of [-2.4,2.4]){c.beginPath();c.arc(cx,cy,r+q,f,t);c.stroke()}c.restore();return}
+    if(pat==='dot'){c.lineCap='round';c.setLineDash([0.01,lw+3])}else if(pat==='dash')c.setLineDash([10,3.5]);
+    c.lineWidth=pat==='thin'?2:lw;c.beginPath();c.arc(cx,cy,r,f,t);c.stroke();c.restore()};
+  for(const b of o.blocks){
+    const a0=ang(b.s),a1=ang(b.e);if(a1<-visA-0.05||a0>visA+0.05)continue;
+    const n=b.lanes||1,r=R-16-(b.lane||0)*8,lw=n>1?4:6;const pat=(CATS[b.ev.cat]||CATS.etc).pat;
+    const seg=(f,t,col,boost)=>{f=Math.max(f,-visA-0.05);t=Math.min(t,visA+0.05);if(t-f<=0)return;arcPat(r,f,t,col,lw+(boost||0),pat)};
+    if(b.e<=now)seg(a0+gap,a1-gap,SV.light);
+    else if(b.s>=now)seg(a0+gap,a1-gap,SV.mid);
+    else{seg(a0+gap,0,SV.light);seg(0,a1-gap,b.e-now<=URGENT?SV.acc:SV.ink,1.5)}
+    if(Math.abs(a0)<=visA){const [x0,y0]=P(R-24,a0),[x1,y1]=P(R-1,a0);c.strokeStyle=b.s>now?SV.ink2:SV.light;c.lineWidth=1;c.beginPath();c.moveTo(x0,y0);c.lineTo(x1,y1);c.stroke()}
+  }
+  const [nx0,ny0]=P(R-34,0),[nx1,ny1]=P(R+26,0);
+  c.strokeStyle=SV.acc;c.lineWidth=1.5;c.beginPath();c.moveTo(nx0,ny0);c.lineTo(nx1,ny1);c.stroke();
+}
+function focusToday(now,S){const t0=sod(now);let f=0;
+  for(const b of S.o.blocks){if(!CATS[b.ev.cat]||!CATS[b.ev.cat].warm)continue;const a=Math.max(b.s,t0),z=Math.min(b.e,now);if(z>a)f+=z-a}
+  return f}
+function updateSaver(now,S){
+  const d=new Date(now);$('svClk').textContent=pad(d.getHours())+':'+pad(d.getMinutes());
+  const tm=$('themeColor');if(tm&&tm.getAttribute('content')!==SV.bg)tm.setAttribute('content',SV.bg);
+  const {cur,warm,next}=S;let h='',f='';
+  if(warm){
+    const p=warm.parent,r=Math.max(0,Math.ceil((p.s-now)/1000)),cat=CATS[p.ev.cat]||CATS.etc;
+    h='<div class="sv-k"><span class="acc">● 예열</span><span>'+seqTxt(seqToday(S.o,p))+'</span><span>'+cat.name+'</span></div>'+
+      '<div class="sv-b'+(r<=10?' blink':'')+'">'+svPix(Math.floor(r/60)+':'+pad(r%60),12,SV.acc,cat.px)+'</div>'+
+      '<p class="sv-u">시작까지</p><p class="sv-t">'+esc(p.ev.title)+'</p><p class="sv-s">'+hm(p.s)+'–'+hm(p.e)+'</p>';
+    f=next?'<small>그다음</small><b>'+esc(next.ev.title)+'</b><span>'+hm(next.s)+'–'+hm(next.e)+'</span>':'';
+  }else if(cur){
+    const rem=cur.e-now,rp=remainParts(rem),cat=CATS[cur.ev.cat]||CATS.etc,urgent=rem<=URGENT;
+    h='<div class="sv-k"><span>'+seqTxt(seqToday(S.o,cur))+'</span><span>'+cat.name+'</span>'+(urgent?'<span class="acc">● 마무리</span>':(SRC[cur.ev.src]?'<span>'+SRC[cur.ev.src]+'</span>':''))+'</div>'+
+      '<div class="sv-b'+(rem<=60000?' blink':'')+'">'+svPix(rp.big,14,urgent?SV.acc:SV.ink,cat.px)+'</div>'+
+      '<p class="sv-u">'+rp.unit+' · <em>'+rp.sec+'초</em></p><p class="sv-t">'+esc(cur.ev.title)+'</p><p class="sv-s">'+hm(cur.s)+'–'+hm(cur.e)+(cur.ev.place?' · '+esc(cur.ev.place):'')+'</p>';
+    f=next?'<small>다음</small><b>'+esc(next.ev.title)+'</b><span>'+hm(next.s)+'–'+hm(next.e)+'</span>':'';
+  }else if(next){
+    const rp=remainParts(next.s-now),dd=Math.round((sod(next.s)-sod(now))/DAY);
+    const lab=dd===0?'다음':dd===1?'내일 첫 일정':md(next.s).split(' ')[0]+' 첫 일정';
+    h='<div class="sv-k"><span>빈 시간</span></div>'+
+      '<div class="sv-b">'+svPix(rp.big,14,SV.mid,'gap')+'</div>'+
+      '<p class="sv-u">'+rp.unit.replace('남음','뒤')+' · <em>'+rp.sec+'초</em></p><p class="sv-t dim">'+lab+'<br>'+esc(next.ev.title)+'</p><p class="sv-s">'+(dd===0?'':md(next.s).split(' ')[0]+' ')+hm(next.s)+'</p>';
+  }else{
+    h='<div class="sv-k"><span>빈 시간</span></div><p class="sv-t dim">'+(state.events.length?'앞으로 2주 안에<br>일정이 없어요':'아직 일정이 없어요')+'</p>';
+  }
+  if(!f){const fz=focusToday(now,S);f='<small>오늘 집중</small><b>'+(fz>=MIN?fmtDur(fz):'0분')+'</b><span>공부·프로젝트</span>'}
+  if(h!==lastSvC){$('svC').innerHTML=h;lastSvC=h}
+  if(f!==lastSvF){$('svF').innerHTML=f;lastSvF=f}
+}
 resize();updatePanel(true);requestAnimationFrame(frame);
 initDb();
 setTimeout(autoRefresh,800);setInterval(autoRefresh,5*MIN);
